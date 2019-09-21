@@ -39,15 +39,15 @@ class ParametreScn(IScannerCheck):
                 valuem = urllib.unquote(urllib.unquote(valuem))
 
                 if re.search(self.url_regex, valuem):
-                    found.append(valuem+"\nParametre Url")
+                    found.append(name+"="+valuem+"\nParametre Url")
                 elif re.search(self.other_url, valuem):
-                    found.append(valuem+"\nParametre Url")
+                    found.append(name+"="+valuem+"\nParametre Url")
                 elif re.search(self.file_regex, valuem):
-                    found.append(valuem+"\nParametre File Url")
+                    found.append(name+"="+valuem+"\nParametre File Url")
                 elif re.search(self.ftp_regex, valuem):
-                    found.append(valuem+"\nFtp url")
+                    found.append(name+"="+valuem+"\nFtp url")
                 elif re.search(self.sql_regex,valuem):
-                    found.append(valuem+"\nSQL File Url")
+                    found.append(name+"="+valuem+"\nSQL File Url")
 
             if found:
                 for par in found:
