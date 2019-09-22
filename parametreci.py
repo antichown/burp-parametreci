@@ -35,8 +35,10 @@ class ParametreScn(IScannerCheck):
     def __init__(self):
         self.url_regex = "http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\), ]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
         self.other_url = "://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\), ]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
-        self.file_regex="\.[a-zA-Z]{1,3}"
+        self.file_regex="\.*(png|txt|jpg|jpeg|txt|php|asp|cgi|cfm|aspx|html|html|jsp|gif|bmap|pdf|tiff|raw|pl|php3|php4|php5|phtml|jspx|cfml|cfc)"
         self.ftp_regex="(ftp):"
+        self.upload_string="type=(|\"|')file"
+
 
     def doPassiveScan(self, baseRequestResponse):
         found=[]
