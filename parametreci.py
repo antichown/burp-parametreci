@@ -4,6 +4,7 @@ import urllib
 from burp import IBurpExtender
 from burp import IScanIssue
 from java.io import PrintWriter
+from array import array
 
 class BurpExtender(IBurpExtender):
     def registerExtenderCallbacks(self, _callbacks):
@@ -11,11 +12,23 @@ class BurpExtender(IBurpExtender):
         callbacks = _callbacks
         helpers = callbacks.getHelpers()
         callbacks.setExtensionName("Parametreci v0.1")
-        Tara = ParametreScn()
         dout = PrintWriter(callbacks.getStdout(), True)
         derr = PrintWriter(callbacks.getStderr(), True)
         dout.println("Parametreci | twitter.com/0x94")
-        callbacks.registerScannerCheck(Tara)
+        callbacks.registerScannerCheck(ParametreScn())
+        callbacks.registerScannerCheck(Upload())
+
+
+class Upload(IScannerCheck):
+    def __init__(self):
+        self.upload_string="type=(|\"|')file"
+
+    def doPassiveScan(self, baseRequestResponse):
+        response = baseRequestResponse.getResponse()
+        http_msg = [callbacks.applyMarkers(baseRequestResponse, None, None)]
+        url  = helpers.analyzeRequest(baseRequestResponse).getUrl()
+        if re.search(self.upload_string, response):
+            return [CustomScanIssue(baseRequestResponse.getHttpService(), url, http_msg, "Upload Bilgi", "Upload file Url "+str(url), "Information")]
 
 
 class ParametreScn(IScannerCheck):
@@ -25,13 +38,17 @@ class ParametreScn(IScannerCheck):
         self.file_regex="\.[a-zA-Z]{1,3}"
         self.ftp_regex="(ftp):"
         self.sql_regex=".sql{1,3}"
+        self.upload_string="type=(|\"|')file"
+
 
     def doPassiveScan(self, baseRequestResponse):
         found=[]
-        request  = baseRequestResponse.getRequest()
+        request = baseRequestResponse.getRequest()
+
         url  = helpers.analyzeRequest(baseRequestResponse).getUrl()
         http_msg = [callbacks.applyMarkers(baseRequestResponse, None, None)]
         params = helpers.analyzeRequest(request).getParameters()
+
         if len(params) > 0:
             for namekey in params:
                 name = namekey.getName()
@@ -39,24 +56,20 @@ class ParametreScn(IScannerCheck):
                 valuem = urllib.unquote(urllib.unquote(valuem))
 
                 if re.search(self.url_regex, valuem):
-                    found.append(name+"="+valuem+"\nParametre Url")
+                    found.append(name+"="+valuem+"\nParametre Link")
                 elif re.search(self.other_url, valuem):
-                    found.append(name+"="+valuem+"\nParametre Url")
+                    found.append(name+"="+valuem+"\nParametre Link")
                 elif re.search(self.file_regex, valuem):
-                    found.append(name+"="+valuem+"\nParametre File Url")
+                    found.append(name+"="+valuem+"\nParametre Dosya")
                 elif re.search(self.ftp_regex, valuem):
-                    found.append(name+"="+valuem+"\nFtp url")
+                    found.append(name+"="+valuem+"\nFtp Link")
                 elif re.search(self.sql_regex,valuem):
-                    found.append(name+"="+valuem+"\nSQL File Url")
+                    found.append(name+"="+valuem+"\nSQL File ")
 
             if found:
                 for par in found:
-                    return [CustomScanIssue(baseRequestResponse.getHttpService(),
-                                            url,
-                                            http_msg,
-                                            "Parametre Bilgisi!",
-                                            par,
-                                            "Information")]
+                    return [CustomScanIssue(baseRequestResponse.getHttpService(), url, http_msg, "Parametre Bilgi",par,"Information")]
+
 
 
 class CustomScanIssue(IScanIssue):
