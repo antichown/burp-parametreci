@@ -37,7 +37,6 @@ class ParametreScn(IScannerCheck):
         self.other_url = "://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\), ]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
         self.file_regex="\.[a-zA-Z]{1,3}"
         self.ftp_regex="(ftp):"
-        self.sql_regex=".sql{1,3}"
         self.upload_string="type=(|\"|')file"
 
 
@@ -63,8 +62,6 @@ class ParametreScn(IScannerCheck):
                     found.append(name+"="+valuem+"\nParametre Dosya")
                 elif re.search(self.ftp_regex, valuem):
                     found.append(name+"="+valuem+"\nFtp Link")
-                elif re.search(self.sql_regex,valuem):
-                    found.append(name+"="+valuem+"\nSQL File ")
 
             if found:
                 for par in found:
