@@ -37,8 +37,6 @@ class ParametreScn(IScannerCheck):
         self.other_url = "://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\), ]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
         self.file_regex="\.[a-zA-Z]{1,3}"
         self.ftp_regex="(ftp):"
-        self.upload_string="type=(|\"|')file"
-
 
     def doPassiveScan(self, baseRequestResponse):
         found=[]
