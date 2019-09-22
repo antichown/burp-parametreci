@@ -27,8 +27,9 @@ class Upload(IScannerCheck):
         response = baseRequestResponse.getResponse()
         http_msg = [callbacks.applyMarkers(baseRequestResponse, None, None)]
         url  = helpers.analyzeRequest(baseRequestResponse).getUrl()
-        if re.search(self.upload_string, response):
-            return [CustomScanIssue(baseRequestResponse.getHttpService(), url, http_msg, "Upload Bilgi", "Upload file Url "+str(url), "Information")]
+        if not ".css" in str(url):
+            if re.search(self.upload_string, response):
+                return [CustomScanIssue(baseRequestResponse.getHttpService(), url, http_msg, "Upload Bilgi", "Upload file Url "+str(url), "Information")]
 
 
 class ParametreScn(IScannerCheck):
